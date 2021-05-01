@@ -78,11 +78,10 @@ class MigrationModuleURLSettingsPage extends FormBase {
   public function importJsonData() {
     $import_url = $this->config('migration_module.settings')
       ->get('migration_module_json_url');
-    $url = UrlHelper::isValid($import_url);
     if ($import_url == "") {
       return -1;
     }
-    elseif (!UrlHelper::isValid($import_url, TRUE)) {
+    elseif (!UrlHelper::isValid ($import_url, TRUE)) {
       return  -2;
     }
     return 0;
