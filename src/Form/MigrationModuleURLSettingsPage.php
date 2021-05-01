@@ -2,6 +2,7 @@
 
 namespace Drupal\migration_module\Form;
 
+use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormBase;
@@ -57,7 +58,7 @@ class MigrationModuleURLSettingsPage extends FormBase {
     $errors = [
       -1 => "No Import URL",
       -2 => "Invalid URL",
-      -3 => "error type 3",
+      -3 => "No data found",
     ];
     $response = $this->importJsonData();
     $message = $this->messenger();
@@ -83,6 +84,12 @@ class MigrationModuleURLSettingsPage extends FormBase {
     }
     elseif (!UrlHelper::isValid($import_url, TRUE)) {
       return -2;
+    }
+    else {
+      $data = Json::decode(file_get_contents($import_url));
+      if (empty($data)) {
+        return -3;
+      }
     }
     return 0;
   }
