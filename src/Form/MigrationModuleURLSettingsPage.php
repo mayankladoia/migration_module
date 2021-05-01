@@ -51,10 +51,13 @@ class MigrationModuleURLSettingsPage extends FormBase {
     $response = -1;
     $messenger = new Messenger();
     if ($response >= 0) {
-      $messenger->addStatus($this->t('@response nodes has been imported.', ['@response' => $values["migration_module_json_url"]]));
+      $messenger->addStatus($this->t('@response nodes has been imported.',
+       ['@response' => $values["migration_module_json_url"]]));
     }
     else {
-      $messenger->addError($this->t('Error @response: Unable to import. Please check format of your JSON file.', ['@response' => $values["migration_module_json_url"]]));
+      $messenger->addError($this->t('Error @response: Unable to import.
+      Please check format of your JSON file.',
+       ['@response' => $values["migration_module_json_url"]]));
     }
   }
 
