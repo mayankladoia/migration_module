@@ -2,8 +2,10 @@
 
 namespace Drupal\migration_module\Form;
 
+use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormBase;
+use Drupal\Core\Render\Element;
 
 /**
  * Contains main function for settings.
@@ -46,18 +48,40 @@ class MigrationModuleURLSettingsPage extends FormBase {
    * After Import button is clicked.
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
+    $config_edit = $this->configFactory()->getEditable('migration_module.settings');
+    foreach (Element::children($form) as $variable) {
+      $config_edit->set($variable, $form_state->getValue($form[$variable]['#parents']));
+    }
+    $config_edit->save();
     $values = $form_state->getValues();
-    $response = 1;
+    $errors = [
+      -1 => "No Import URL",
+      -2 => "Invalid URL",
+      -3 => "error type 3",
+    ];
+    $response = $this->importJSONData();
     $message = $this->messenger();
     if ($response >= 0) {
       $message->addStatus($this->t('@response nodes has been imported.',
-       ['@response' => $values["migration_module_json_url"]]));
+       ['@response' => $response]));
     }
     else {
-      $message->addError($this->t('Error @response: Unable to import.
+      $message->addError($this->t('Error:: @response. Unable to import.
       Please check format of your JSON file.',
-       ['@response' => $values["migration_module_json_url"]]));
+       ['@response' => $errors[$response]]));
     }
+  }
+  
+  public function importJSONData() {
+    $import_url = $this->config('migration_module.settings')
+    ->get('migration_module_json_url');
+    $url = UrlHelper::isValid($import_url);
+    if($import_url == "") {
+      return -1;
+    } else if(!UrlHelper::isValid($import_url, TRUE)) {
+      return  -2;
+    }
+    return 0;
   }
 
 }
