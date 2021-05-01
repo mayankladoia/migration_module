@@ -2,11 +2,14 @@
 
 namespace Drupal\migration_module\Form;
 
+use Drupal;
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Render\Element;
+use Drupal\node\Entity\Node;
+use Drupal\Core\Database;
 
 /**
  * Contains main function for settings.
@@ -66,6 +69,11 @@ class MigrationModuleURLSettingsPage extends FormBase {
       $message->addStatus($this->t('@response nodes has been imported.',
        ['@response' => $response]));
     }
+    elseif ($response == -99) {
+      $message->addWarning($this->t('Warning:: Different Number of
+      Company and Users Imported. Please check Drupal and JOSN and make sure
+      everything is place.'));
+    }
     else {
       $message->addError($this->t('Error:: @response. Unable to import.
       Please check format of your JSON file.',
@@ -90,8 +98,63 @@ class MigrationModuleURLSettingsPage extends FormBase {
       if (empty($data)) {
         return -3;
       }
+      $connection = Drupal::database();
+      $count = 0;
+      $count_user = 0;
+      $count_company = 0;
+      foreach ($data as $item) {
+        $result1 = 0;
+        $result2 = 0;
+        $ids = Drupal::entityQuery('node')
+          ->condition('type', 'user_import')
+          ->condition('field_id', $item['id'], "=")
+          ->execute();
+        if(empty($ids)) {
+          $node = Node::create([
+          'type'        => 'user_import',
+          'field_id'       => $item['id'],
+          'title'       => $item['name'],
+          'field_username'       => $item['username'],
+          'field_email'       => $item['email'],
+          'field_address_street'       => $item['address']['street'],
+          'field_address_suite'       => $item['address']['suite'],
+          'field_address_city'       => $item['address']['city'],
+          'field_address_zipcode'       => $item['address']['zipcode'],
+          'field_address_geo_lat'       => $item['address']['geo']['lat'],
+          'field_address_geo_lng'       => $item['address']['geo']['lng'],
+          'field_phone'       => $item['phone'],
+          'field_website'       => $item['website'],
+          ]);
+          $result1 = $node->save();
+          if($result1 != 0) {
+            $count_user++;
+          }
+        }
+        $ids = Drupal::entityQuery('node')
+          ->condition('type', 'company_import')
+          ->condition('field_id_company', $item['id'], "=")
+          ->execute();
+        if(empty($ids)) {
+          $node = Node::create([
+            'type' => 'company_import',
+            'field_id_company' => $item['id'],
+            'title' => $item['company']['name'],
+            'field_catchphrase' => $item['company']['catchPhrase'],
+            'field_bs' => $item['company']['bs'],
+          ]);
+          $result2 = $node->save();
+          if($result2 != 0) {
+            $count_company++;
+          }
+        }
+        $count++;
+      }
     }
-    return 0;
+    if($count_user == $count_company) {
+      return $count_company;
+    } else {
+      return -99;
+    }
   }
 
 }
