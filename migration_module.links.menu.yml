@@ -1,0 +1,9 @@
+#Through this file we add links to /admin/config page
+cloudfront_path_invalidate.admin:
+  title: 'Migration Module URL'
+  description: 'Add JSON URL to import data'
+  parent: system.admin_config_development
+  expanded: 1
+  route_name: migration_module.settings
+  weight: 100
+  type: MENU_LOCAL_TASK
