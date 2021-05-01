@@ -43,8 +43,8 @@ class MigrationModuleURLSettingsPage extends FormBase {
   }
 
   /**
-  * After Import button is clicked.
-  */
+   * After Import button is clicked.
+   */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
     $response = -1;
