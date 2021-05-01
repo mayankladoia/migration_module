@@ -11,7 +11,8 @@ CONTENTS OF THIS FILE
 
 INTRODUCTION
 ================================================================================
-This module imports from the JSON endpoint into Drupal as nodes of each content type
+This module imports from the JSON endpoint into Drupal as nodes of each
+content type
 
 
 REQUIREMENTS
