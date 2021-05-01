@@ -2,8 +2,9 @@
 
 namespace Drupal\migration_module\Form;
 
-use Drupal\Core\Form\FormBase;
+use Drupal;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Form\FormBase;
 
 /**
  * Contains main function for settings.
@@ -48,7 +49,7 @@ class MigrationModuleURLSettingsPage extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
     $response = -1;
-    $messenger = \Drupal::messenger();
+    $messenger = Drupal::messenger();
     if ($response >= 0) {
       $messenger->addStatus($this->t('@response nodes has been imported.', ['@response' => $values["migration_module_json_url"]]));
     }
