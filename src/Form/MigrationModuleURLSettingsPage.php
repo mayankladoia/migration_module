@@ -2,14 +2,14 @@
 
 namespace Drupal\migration_module\Form;
 
-use Drupal\Core\Form\ConfigFormBase;
+use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 
 /**
  * Contains main function for settings.
  */
-class MigrationModuleURLSettingsPage extends ConfigFormBase {
+class MigrationModuleURLSettingsPage extends FormBase {
 
   /**
    * {@inheritdoc}
@@ -36,25 +36,26 @@ class MigrationModuleURLSettingsPage extends ConfigFormBase {
       '#required' => TRUE,
       '#default_value' => $config->get('migration_module_json_url'),
     ];
-    return parent::buildForm($form, $form_state);
+    $form['submit'] = [
+      '#type' => 'submit',
+      '#value' => $this->t('Import'),
+    ];
+    return $form;
   }
 
-  /**
-   * {@inheritdoc}
+/**
+   * After Import button is clicked.
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
-    $config = $this->config('migration_module.settings');
-
-    foreach (Element::children($form) as $variable) {
-      $config->set($variable, $form_state->getValue($form[$variable]['#parents']));
+    $values = $form_state->getValues();
+    $response = -1;
+    $messenger = \Drupal::messenger();
+    if ($response >= 0) {
+      $messenger->addStatus($this->t('@response nodes has been imported.', ['@response' => $values["migration_module_json_url"]]));
     }
-    $config->save();
-
-    if (method_exists($this, '_submitForm')) {
-      $this->_submitForm($form, $form_state);
+    else {
+      $messenger->addError($this->t('Error @response: Unable to import. Please check format of your JSON file.', ['@response' => $values["migration_module_json_url"]]));
     }
-
-    parent::submitForm($form, $form_state);
   }
 
 }
