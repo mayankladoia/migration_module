@@ -2,10 +2,9 @@
 
 namespace Drupal\migration_module\Form;
 
-use \Drupal\Core\Messenger\Messenger;
+use Drupal\Core\Messenger\Messenger;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormBase;
-use http\Message;
 
 /**
  * Contains main function for settings.
