@@ -2,6 +2,8 @@ name: 'My Custom Migration Module'
 description: 'Imports from the JSON endpoint into Drupal as nodes of each content type'
 package: Custom
 core: 8.x
+dependencies:
+  - node
 core_version_requirement: ^8
 type: module
 configure: migration_module.settings
