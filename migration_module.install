@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * @file
+ * migration module install file.
+ */
+
+/**
+ * Implements hook_uninstall().
+ */
+function migration_module_uninstall() {
+  \Drupal::configFactory()->getEditable('migration_module.settings')->delete();
+}
