@@ -81,8 +81,8 @@ class MigrationModuleURLSettingsPage extends FormBase {
     if ($import_url == "") {
       return -1;
     }
-    elseif (!UrlHelper::isValid ($import_url, TRUE)) {
-      return  -2;
+    elseif (!UrlHelper::isValid($import_url, TRUE)) {
+      return -2;
     }
     return 0;
   }
