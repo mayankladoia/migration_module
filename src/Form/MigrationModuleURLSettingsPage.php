@@ -7,7 +7,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Render\Element;
 
 /**
- * Contains main function for settings
+ * Contains main function for settings.
  */
 class MigrationModuleURLSettingsPage extends ConfigFormBase {
 
@@ -17,7 +17,7 @@ class MigrationModuleURLSettingsPage extends ConfigFormBase {
   public function getFormId() {
     return 'migration_module_settings_page';
   }
-  
+
   /**
    * {@inheritdoc}
    */
@@ -38,7 +38,7 @@ class MigrationModuleURLSettingsPage extends ConfigFormBase {
     ];
     return parent::buildForm($form, $form_state);
   }
-  
+
   /**
    * {@inheritdoc}
    */
@@ -56,4 +56,5 @@ class MigrationModuleURLSettingsPage extends ConfigFormBase {
 
     parent::submitForm($form, $form_state);
   }
+  
 }
