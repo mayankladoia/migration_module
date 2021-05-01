@@ -1,0 +1,7 @@
+migration_module.settings:
+  path: '/admin/config/migration_module_settings/JSON_URL'
+  defaults:
+    _title: 'JSON URL to import data'
+    _form: \Drupal\migration_module\Form\MigrationModuleURLSettingsPage
+  requirements:
+    _permission: 'administer migration_module'
