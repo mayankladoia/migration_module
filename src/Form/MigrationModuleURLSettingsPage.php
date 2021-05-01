@@ -9,7 +9,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Render\Element;
 use Drupal\node\Entity\Node;
-use Drupal\Core\Database;
 
 /**
  * Contains main function for settings.
