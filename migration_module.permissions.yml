@@ -1,0 +1,3 @@
+'administer migration_module':
+  title: 'Migration Module'
+  description: "Imports from the JSON endpoint into Drupal as nodes of each content type"
