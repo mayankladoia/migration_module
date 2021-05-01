@@ -4,7 +4,6 @@ namespace Drupal\migration_module\Form;
 
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
-use Drupal\Core\Render\Element;
 
 /**
  * Contains main function for settings.
@@ -43,7 +42,7 @@ class MigrationModuleURLSettingsPage extends FormBase {
     return $form;
   }
 
-/**
+   /**
    * After Import button is clicked.
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
