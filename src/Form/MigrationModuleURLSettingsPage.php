@@ -2,8 +2,10 @@
 
 namespace Drupal\migration_module\Form;
 
+use \Drupal\Core\Messenger\Messenger;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormBase;
+use http\Message;
 
 /**
  * Contains main function for settings.
@@ -48,11 +50,12 @@ class MigrationModuleURLSettingsPage extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
     $response = -1;
+    $messenger = new Messenger();
     if ($response >= 0) {
-      \Drupal::messenger()->addStatus($this->t('@response nodes has been imported.', ['@response' => $values["migration_module_json_url"]]));
+      $messenger->addStatus($this->t('@response nodes has been imported.', ['@response' => $values["migration_module_json_url"]]));
     }
     else {
-      \Drupal::messenger()->addError($this->t('Error @response: Unable to import. Please check format of your JSON file.', ['@response' => $values["migration_module_json_url"]]));
+      $messenger->addError($this->t('Error @response: Unable to import. Please check format of your JSON file.', ['@response' => $values["migration_module_json_url"]]));
     }
   }
 
