@@ -49,12 +49,11 @@ class MigrationModuleURLSettingsPage extends FormBase {
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $values = $form_state->getValues();
     $response = -1;
-    $messenger = Drupal::messenger();
     if ($response >= 0) {
-      $messenger->addStatus($this->t('@response nodes has been imported.', ['@response' => $values["migration_module_json_url"]]));
+      Drupal::messenger()->addStatus($this->t('@response nodes has been imported.', ['@response' => $values["migration_module_json_url"]]));
     }
     else {
-      $messenger->addError($this->t('Error @response: Unable to import. Please check format of your JSON file.', ['@response' => $values["migration_module_json_url"]]));
+      Drupal::messenger()->addError($this->t('Error @response: Unable to import. Please check format of your JSON file.', ['@response' => $values["migration_module_json_url"]]));
     }
   }
 
