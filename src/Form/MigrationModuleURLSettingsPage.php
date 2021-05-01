@@ -59,7 +59,7 @@ class MigrationModuleURLSettingsPage extends FormBase {
       -2 => "Invalid URL",
       -3 => "error type 3",
     ];
-    $response = $this->importJSONData();
+    $response = $this->importJsonData();
     $message = $this->messenger();
     if ($response >= 0) {
       $message->addStatus($this->t('@response nodes has been imported.',
@@ -71,14 +71,17 @@ class MigrationModuleURLSettingsPage extends FormBase {
        ['@response' => $errors[$response]]));
     }
   }
-  
-  public function importJSONData() {
+
+  /**
+   * Main Function to import data.
+   */
+  public function importJsonData() {
     $import_url = $this->config('migration_module.settings')
-    ->get('migration_module_json_url');
+      ->get('migration_module_json_url');
     $url = UrlHelper::isValid($import_url);
-    if($import_url == "") {
+    if ($import_url == "") {
       return -1;
-    } else if(!UrlHelper::isValid($import_url, TRUE)) {
+    } elseif(!UrlHelper::isValid($import_url, TRUE)) {
       return  -2;
     }
     return 0;
