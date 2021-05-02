@@ -2,7 +2,6 @@
 
 namespace Drupal\migration_module\Form;
 
-use Drupal;
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -10,6 +9,7 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Render\Element;
 use Drupal\node\Entity\Node;
+use Drupal\Core\Cache\CacheBackendInterface;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -34,6 +34,13 @@ class MigrationModuleURLSettingsPage extends FormBase {
   protected $httpClient;
 
   /**
+   * Service to clear cache.
+   *
+   * @var Drupal\Core\Cache\CacheBackendInterface
+   */
+  protected $cacheBackend;
+
+  /**
    * Constructs a new QueryInterface class.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
@@ -41,9 +48,10 @@ class MigrationModuleURLSettingsPage extends FormBase {
    * @param \GuzzleHttp\ClientInterface $http_client
    *   A Guzzle client object.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, ClientInterface $http_client) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, ClientInterface $http_client, CacheBackendInterface $cacheBackend) {
     $this->entityTypeManager = $entity_type_manager;
     $this->httpClient = $http_client;
+    $this->cacheBackend = $cacheBackend;
   }
 
   /**
@@ -52,7 +60,8 @@ class MigrationModuleURLSettingsPage extends FormBase {
   public static function create(ContainerInterface $container) {
     return new static(
       $container->get('entity_type.manager'),
-      $container->get('http_client')
+      $container->get('http_client'),
+      $container->get('cache.dynamic_page_cache')
     );
   }
 
@@ -221,7 +230,7 @@ class MigrationModuleURLSettingsPage extends FormBase {
         }
       }
     }
-    Drupal::service('cache.dynamic_page_cache')->invalidateAll();
+    $this->cacheBackend->invalidateAll();
     if ($count_user == $count_company) {
       return $count_company + $count_user;
     }
