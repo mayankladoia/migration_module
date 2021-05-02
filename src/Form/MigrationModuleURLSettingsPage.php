@@ -58,6 +58,11 @@ class MigrationModuleURLSettingsPage extends FormBase {
 
   /**
    * Building form to save JSON URL.
+   *
+   * @param array $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *
+   * @return array
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('migration_module.settings');
@@ -76,6 +81,9 @@ class MigrationModuleURLSettingsPage extends FormBase {
 
   /**
    * After Import button is clicked.
+   *
+   * @param array $form
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config_edit = $this->configFactory()->getEditable('migration_module.settings');
@@ -83,7 +91,6 @@ class MigrationModuleURLSettingsPage extends FormBase {
       $config_edit->set($variable, $form_state->getValue($form[$variable]['#parents']));
     }
     $config_edit->save();
-    $values = $form_state->getValues();
     $errors = [
       -1 => "No Import URL",
       -2 => "Invalid URL",
@@ -127,9 +134,6 @@ class MigrationModuleURLSettingsPage extends FormBase {
       $count_user = 0;
       $count_company = 0;
       foreach ($data as $item) {
-        $result1 = 0;
-        $result2 = 0;
-        $connection = $this->entityQuery;
         $ids = $this->entityTypeManager->getStorage('node')->getQuery()
           ->condition('type', 'user_import')
           ->condition('field_id', $item['id'], "=")
