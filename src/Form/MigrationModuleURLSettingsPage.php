@@ -47,6 +47,8 @@ class MigrationModuleURLSettingsPage extends FormBase {
    *   The module handler.
    * @param \GuzzleHttp\ClientInterface $http_client
    *   A Guzzle client object.
+   * @param \Drupal\Core\Cache\CacheBackendInterface $cacheBackend
+   *   A Cache Clear for Dynamic page.
    */
   public function __construct(EntityTypeManagerInterface $entity_type_manager, ClientInterface $http_client, CacheBackendInterface $cacheBackend) {
     $this->entityTypeManager = $entity_type_manager;
