@@ -4,7 +4,7 @@ namespace Drupal\migration_module\Form;
 
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\UrlHelper;
-use Drupal\Core\Entity\Query\QueryFactory;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Render\Element;
@@ -17,20 +17,20 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class MigrationModuleURLSettingsPage extends FormBase {
 
   /**
-   * Drupal\Core\Entity\Query\QueryFactory definition.
+   * The entity type manager.
    *
-   * @var Drupal\Core\Entity\Query\QueryFactory
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityQuery;
+  protected $entityTypeManager;
 
   /**
    * Constructs a new QueryInterface class.
    *
-   * @param \Drupal\Core\Entity\Query\QueryInterface $entityQuery
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The module handler.
    */
-  public function __construct(QueryFactory $entityQuery) {
-    $this->entityQuery = $entityQuery;
+  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -38,7 +38,7 @@ class MigrationModuleURLSettingsPage extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity.query')
+      $container->get('entity_type.manager')
     );
   }
 
@@ -130,7 +130,7 @@ class MigrationModuleURLSettingsPage extends FormBase {
         $result1 = 0;
         $result2 = 0;
         $connection = $this->entityQuery;
-        $ids = $this->entityQuery->get('node')
+        $ids = $this->entityTypeManager->getStorage('node')->getQuery()
           ->condition('type', 'user_import')
           ->condition('field_id', $item['id'], "=")
           ->execute();
@@ -156,7 +156,7 @@ class MigrationModuleURLSettingsPage extends FormBase {
             $count_user++;
           }
         }
-        $ids = $this->entityQuery->get('node')
+        $ids = $this->entityTypeManager->getStorage('node')->getQuery()
           ->condition('type', 'company_import')
           ->condition('field_id_company', $item['id'], "=")
           ->execute();

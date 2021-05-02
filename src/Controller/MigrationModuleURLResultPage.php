@@ -3,7 +3,6 @@
 namespace Drupal\migration_module\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\Core\Entity\Query\QueryFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
@@ -20,23 +19,23 @@ class MigrationModuleURLResultPage extends ControllerBase {
   private $nodeStorage;
 
   /**
-   * Drupal\Core\Entity\Query\QueryFactory definition.
+   * The entity type manager.
    *
-   * @var Drupal\Core\Entity\Query\QueryFactory
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
-  protected $entityQuery;
+  protected $entityTypeManager;
 
   /**
    * Class constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity
    *   The Entity type manager service.
-   * @param \Drupal\Core\Entity\Query\QueryInterface $entityQuery
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The EntityQuery type manager service.
    */
-  public function __construct(EntityTypeManagerInterface $entity, QueryFactory $entityQuery) {
-    $this->nodeStorage = $entity->getStorage('node');
-    $this->entityQuery = $entityQuery;
+  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+    $this->nodeStorage = $entity_type_manager->getStorage('node');
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -54,7 +53,7 @@ class MigrationModuleURLResultPage extends ControllerBase {
    */
   public function displayText(): array {
     $output = [];
-    $result = $this->entityQuery->get('node')
+    $result = $this->entityTypeManager->getStorage('node')->getQuery()
       ->condition('type', 'user_import')
       ->execute();
     $html = '<table style="table-layout:fixed;">
@@ -84,7 +83,7 @@ class MigrationModuleURLResultPage extends ControllerBase {
       . "</td>";
       $html .= '<td>' . $data->get('field_phone')->value . "</td>";
       $html .= '<td>' . $data->get('field_website')->value . "</td>";
-      $company = $this->entityQuery->get('node')
+      $company = $this->entityTypeManager->getStorage('node')->getQuery()
         ->condition('type', 'company_import')
         ->condition('field_id_company', $data->get('field_id')->value, "=")
         ->execute();
