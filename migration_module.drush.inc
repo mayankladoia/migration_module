@@ -130,13 +130,12 @@ function drush_migration_module_import_json() {
         '@user' => $count_user,
         '@company' => $count_company,
       ]));
-    return;
   }
   else {
     drush_print(t('Warning:: Different Number of
       Company and Users Imported. Please check Drupal and JOSN and make sure
       everything is place.'));
-    return;
   }
+  Drupal::service('cache.dynamic_page_cache')->invalidateAll();
 
 }

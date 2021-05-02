@@ -2,6 +2,7 @@
 
 namespace Drupal\migration_module\Form;
 
+use Drupal;
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
@@ -220,6 +221,7 @@ class MigrationModuleURLSettingsPage extends FormBase {
         }
       }
     }
+    Drupal::service('cache.dynamic_page_cache')->invalidateAll();
     if ($count_user == $count_company) {
       return $count_company + $count_user;
     }
