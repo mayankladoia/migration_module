@@ -37,6 +37,7 @@ class MigrationModuleURLResultPage extends ControllerBase {
     $container->get('entity_type.manager')
     );
   }
+
   /**
    * Format imported data in html table format.
    */
