@@ -2,9 +2,9 @@
 
 namespace Drupal\migration_module\Form;
 
-use Drupal;
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\UrlHelper;
+use Drupal\Core\Entity\Query\QueryFactory;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Render\Element;
@@ -17,9 +17,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class MigrationModuleURLSettingsPage extends FormBase {
 
   /**
-   * The module handler.
+   * Drupal\Core\Entity\Query\QueryFactory definition.
    *
-   * @var \Drupal\Core\Entity\Query\QueryInterface
+   * @var Drupal\Core\Entity\Query\QueryFactory
    */
   protected $entityQuery;
 
@@ -29,16 +29,16 @@ class MigrationModuleURLSettingsPage extends FormBase {
    * @param \Drupal\Core\Entity\Query\QueryInterface $entityQuery
    *   The module handler.
    */
-  /*public function __construct(QueryInterface $entityQuery) {
-  $this->entityQuery = $entityQuery;
-  }*/
+  public function __construct(QueryFactory $entityQuery) {
+    $this->entityQuery = $entityQuery;
+  }
 
   /**
    * {@inheritdoc}
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity.query')->get('node')
+      $container->get('entity.query')
     );
   }
 
@@ -130,7 +130,7 @@ class MigrationModuleURLSettingsPage extends FormBase {
         $result1 = 0;
         $result2 = 0;
         $connection = $this->entityQuery;
-        $ids = Drupal::entityQuery('node')
+        $ids = $this->entityQuery->get('node')
           ->condition('type', 'user_import')
           ->condition('field_id', $item['id'], "=")
           ->execute();
@@ -156,7 +156,7 @@ class MigrationModuleURLSettingsPage extends FormBase {
             $count_user++;
           }
         }
-        $ids = Drupal::entityQuery('node')
+        $ids = $this->entityQuery->get('node')
           ->condition('type', 'company_import')
           ->condition('field_id_company', $item['id'], "=")
           ->execute();

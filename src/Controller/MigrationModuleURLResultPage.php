@@ -2,8 +2,8 @@
 
 namespace Drupal\migration_module\Controller;
 
-use Drupal;
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Entity\Query\QueryFactory;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 
@@ -20,13 +20,22 @@ class MigrationModuleURLResultPage extends ControllerBase {
   private $nodeStorage;
 
   /**
+   * Drupal\Core\Entity\Query\QueryFactory definition.
+   *
+   * @var Drupal\Core\Entity\Query\QueryFactory
+   */
+  protected $entityQuery;
+
+  /**
    * Class constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity
+   * @param \Drupal\Core\Entity\Query\QueryInterface $entityQuery
    *   The Entity type manager service.
    */
-  public function __construct(EntityTypeManagerInterface $entity) {
+  public function __construct(EntityTypeManagerInterface $entity, QueryFactory $entityQuery) {
     $this->nodeStorage = $entity->getStorage('node');
+    $this->entityQuery = $entityQuery;
   }
 
   /**
@@ -34,7 +43,8 @@ class MigrationModuleURLResultPage extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-    $container->get('entity_type.manager')
+    $container->get('entity_type.manager'),
+    $container->get('entity.query')
     );
   }
 
@@ -43,7 +53,7 @@ class MigrationModuleURLResultPage extends ControllerBase {
    */
   public function displayText(): array {
     $output = [];
-    $result = Drupal::entityQuery('node')
+    $result = $this->entityQuery->get('node')
       ->condition('type', 'user_import')
       ->execute();
     $html = '<table style="table-layout:fixed;">
@@ -73,7 +83,7 @@ class MigrationModuleURLResultPage extends ControllerBase {
       . "</td>";
       $html .= '<td>' . $data->get('field_phone')->value . "</td>";
       $html .= '<td>' . $data->get('field_website')->value . "</td>";
-      $company = Drupal::entityQuery('node')
+      $company = $this->entityQuery->get('node')
         ->condition('type', 'company_import')
         ->condition('field_id_company', $data->get('field_id')->value, "=")
         ->execute();
