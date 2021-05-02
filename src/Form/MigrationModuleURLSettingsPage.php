@@ -9,12 +9,40 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Render\Element;
 use Drupal\node\Entity\Node;
+use Drupal\Core\Entity\Query\QueryInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Contains main function for settings.
  */
 class MigrationModuleURLSettingsPage extends FormBase {
 
+  /**
+   * The module handler.
+   *
+   * @var Drupal\Core\Entity\Query\QueryInterface
+   */
+  protected $entityQuery;
+  
+  /**
+    * Constructs a new QueryInterface class.
+    *
+    * @param \Drupal\Core\Entity\Query\QueryInterface $entityQuery
+    *   The module handler.
+    */
+  /*public function __construct(QueryInterface $entityQuery) {
+    $this->entityQuery = $entityQuery;
+  }*/
+  
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('entity.query')->get('node')
+    );
+  }
+  
   /**
    * {@inheritdoc}
    */
@@ -97,17 +125,17 @@ class MigrationModuleURLSettingsPage extends FormBase {
       if (empty($data)) {
         return -3;
       }
-      $connection = Drupal::database();
-      $count = 0;
       $count_user = 0;
       $count_company = 0;
       foreach ($data as $item) {
         $result1 = 0;
         $result2 = 0;
+        $connection = $this->entityQuery;
         $ids = Drupal::entityQuery('node')
           ->condition('type', 'user_import')
           ->condition('field_id', $item['id'], "=")
           ->execute();
+          
         if(empty($ids)) {
           $node = Node::create([
           'type'        => 'user_import',
@@ -146,7 +174,6 @@ class MigrationModuleURLSettingsPage extends FormBase {
             $count_company++;
           }
         }
-        $count++;
       }
     }
     if($count_user == $count_company) {

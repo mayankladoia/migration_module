@@ -5,3 +5,9 @@ migration_module.settings:
     _form: \Drupal\migration_module\Form\MigrationModuleURLSettingsPage
   requirements:
     _permission: 'administer migration_module'
+migration_module.result:
+  path: '/migration_module_settings/JSON_URL/result'
+  defaults:
+    _controller: \Drupal\migration_module\Controller\MigrationModuleURLResultPage::display_text
+  requirements:
+    _permission: 'access content'
