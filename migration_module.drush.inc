@@ -5,7 +5,9 @@
  * Implement Drush Command to import data.
  */
 
-use Drupal\migration_module\Form\MigrationModuleURLSettingsPage;
+use Drupal\Component\Serialization\Json;
+use Drupal\Component\Utility\UrlHelper;
+use Drupal\node\Entity\Node;
 
 /**
  * @file
@@ -29,13 +31,78 @@ function migration_module_drush_command() {
  * Callback function for drush import-json command.
  */
 function drush_migration_module_import_json() {
-  $m = new MigrationModuleURLSettingsPage();
+  $import_url = Drupal::config('migration_module.settings')->get('migration_module_json_url');
+  $response = 0;
+  if ($import_url == "") {
+    $response = -1;
+  }
+  elseif (!UrlHelper::isValid($import_url, TRUE)) {
+    $response = -2;
+  }
+  else {
+    $data = Json::decode(file_get_contents($import_url));
+    if (empty($data)) {
+      $response = -3;
+    }
+    $count_user = 0;
+    $count_company = 0;
+    foreach ($data as $item) {
+      $ids = Drupal::entityQuery('node')
+        ->condition('type', 'user_import')
+        ->condition('field_id', $item['id'], "=")
+        ->execute();
+
+      if (empty($ids)) {
+        $node = Node::create([
+          'type'        => 'user_import',
+          'field_id'       => $item['id'],
+          'title'       => $item['name'],
+          'field_username'       => $item['username'],
+          'field_email'       => $item['email'],
+          'field_address_street'       => $item['address']['street'],
+          'field_address_suite'       => $item['address']['suite'],
+          'field_address_city'       => $item['address']['city'],
+          'field_address_zipcode'       => $item['address']['zipcode'],
+          'field_address_geo_lat'       => $item['address']['geo']['lat'],
+          'field_address_geo_lng'       => $item['address']['geo']['lng'],
+          'field_phone'       => $item['phone'],
+          'field_website'       => $item['website'],
+        ]);
+        $result1 = $node->save();
+        if ($result1 != 0) {
+          $count_user++;
+        }
+      }
+      $ids = Drupal::entityQuery('node')
+        ->condition('type', 'company_import')
+        ->condition('field_id_company', $item['id'], "=")
+        ->execute();
+      if (empty($ids)) {
+        $node = Node::create([
+          'type' => 'company_import',
+          'field_id_company' => $item['id'],
+          'title' => $item['company']['name'],
+          'field_catchphrase' => $item['company']['catchPhrase'],
+          'field_bs' => $item['company']['bs'],
+        ]);
+        $result2 = $node->save();
+        if ($result2 != 0) {
+          $count_company++;
+        }
+      }
+    }
+  }
+  if ($count_user == $count_company) {
+    $response = $count_company;
+  }
+  else {
+    $response = -99;
+  }
   $errors = [
     -1 => "No Import URL",
     -2 => "Invalid URL",
     -3 => "No data found",
   ];
-  $response = $m->importJsonData();
   if ($response >= 0) {
     drush_print(t('@response nodes has been imported.',
        ['@response' => $response]));
