@@ -28,8 +28,6 @@ class MigrationModuleURLResultPage extends ControllerBase {
   /**
    * Class constructor.
    *
-   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity
-   *   The Entity type manager service.
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The EntityQuery type manager service.
    */
