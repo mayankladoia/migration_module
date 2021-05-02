@@ -8,6 +8,6 @@ migration_module.settings:
 migration_module.result:
   path: '/migration_module_settings/JSON_URL/result'
   defaults:
-    _controller: \Drupal\migration_module\Controller\MigrationModuleURLResultPage::display_text
+    _controller: \Drupal\migration_module\Controller\MigrationModuleURLResultPage::displayText
   requirements:
     _permission: 'access content'

@@ -2,13 +2,14 @@
 
 /**
  * @file
+ * Implement Drush Command to import data.
  */
 
 use Drupal\migration_module\Form\MigrationModuleURLSettingsPage;
 
 /**
  * @file
- * Drush integration for the Token module.
+ * Drush integration for the Migration module.
  */
 
 /**
@@ -21,28 +22,11 @@ function migration_module_drush_command() {
     'drupal dependencies' => ['migration_module'],
     'aliases' => ['import:json'],
   ];
-  $items['say-hello'] = [
-    'description' => 'Echo the name you type with Say hello command',
-    'arguments' => [
-      'name' => 'The name for saying hello',
-    ],
-    'drupal dependencies' => ['migration_module'],
-    'aliases' => ['say:hello'],
-  ];
   return $items;
 }
 
 /**
- * Call back function drush_custom_drush_command_say_hello()
- * The call back function name in the  following format
- *   drush_{module_name}_{item_id_for_command}()
- */
-function drush_migration_module_say_hello($name = '') {
-  drush_print('Hello ' . $name . ' !');
-}
-
-/**
- *
+ * Callback function for drush import-json command.
  */
 function drush_migration_module_import_json() {
   $m = new MigrationModuleURLSettingsPage();

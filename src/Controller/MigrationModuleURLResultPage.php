@@ -7,14 +7,14 @@ use Drupal\Core\Controller\ControllerBase;
 use Drupal\node\Entity\Node;
 
 /**
- *
+ * Class to display the imported data.
  */
 class MigrationModuleURLResultPage extends ControllerBase {
 
   /**
-   *
+   * Format imported data in html table format.
    */
-  public function display_text(): array {
+  public function displayText(): array {
     $output = [];
     $result = Drupal::entityQuery('node')
       ->condition('type', 'user_import')
