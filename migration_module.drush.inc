@@ -8,6 +8,7 @@
 use Drupal\Component\Serialization\Json;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\node\Entity\Node;
+use GuzzleHttp\Exception\RequestException;
 
 /**
  * @file
@@ -36,7 +37,8 @@ function drush_migration_module_import_json() {
   $errors = [
     -1 => "No Import URL",
     -2 => "Invalid URL",
-    -3 => "No data found",
+    -3 => "Unable to load URL",
+    -4 => "No data found",
   ];
   if ($import_url == "") {
     $response = -1;
@@ -53,7 +55,17 @@ function drush_migration_module_import_json() {
     return;
   }
   else {
-    $req = Drupal::httpClient()->get($import_url, ['headers' => ['Accept' => 'text/plain']]);
+    try {
+      $req = Drupal::httpClient()->get($import_url, ['headers' => ['Accept' => 'text/plain']]);
+    }
+    catch (RequestException $e) {
+      watchdog_exception('migration_module', $e);
+      $response = -3;
+      drush_print(t('Error:: @response. Unable to import.
+      Please check your JSON feed URL.',
+        ['@response' => $errors[$response]]));
+      return;
+    }
     $data = Json::decode((string) $req->getBody());
     if (empty($data)) {
       $response = -3;
