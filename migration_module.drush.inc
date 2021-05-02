@@ -53,7 +53,7 @@ function drush_migration_module_import_json() {
     return;
   }
   else {
-    $req = Drupal::httpClient()->get($import_url, array('headers' => array('Accept' => 'text/plain')));
+    $req = Drupal::httpClient()->get($import_url, ['headers' => ['Accept' => 'text/plain']]);
     $data = Json::decode((string) $req->getBody());
     if (empty($data)) {
       $response = -3;
