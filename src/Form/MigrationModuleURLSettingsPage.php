@@ -72,7 +72,7 @@ class MigrationModuleURLSettingsPage extends FormBase {
     $form['migration_module_json_url'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Enter JSON URL for import'),
-      '#required' => TRUE,
+      // '#required' => TRUE,
       '#default_value' => $config->get('migration_module_json_url'),
     ];
     $form['submit'] = [
@@ -104,8 +104,9 @@ class MigrationModuleURLSettingsPage extends FormBase {
     $response = $this->importJsonData();
     $message = $this->messenger();
     if ($response >= 0) {
-      $message->addStatus($this->t('@response nodes has been imported.',
-       ['@response' => $response]));
+      $message->addStatus($this->t('@response nodes has been imported.
+      @user - Users & @company - Company',
+      ['@response' => $response, '@user' => $response / 2, '@company' => $response / 2]));
     }
     elseif ($response == -99) {
       $message->addWarning($this->t('Warning:: Different Number of
@@ -114,7 +115,7 @@ class MigrationModuleURLSettingsPage extends FormBase {
     }
     else {
       $message->addError($this->t('Error:: @response. Unable to import.
-      Please check format of your JSON file.',
+      Please check your JSON feed URL.',
        ['@response' => $errors[$response]]));
     }
   }
@@ -185,7 +186,7 @@ class MigrationModuleURLSettingsPage extends FormBase {
       }
     }
     if ($count_user == $count_company) {
-      return $count_company;
+      return $count_company + $count_user;
     }
     else {
       return -99;

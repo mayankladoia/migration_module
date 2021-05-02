@@ -33,16 +33,33 @@ function migration_module_drush_command() {
 function drush_migration_module_import_json() {
   $import_url = Drupal::config('migration_module.settings')->get('migration_module_json_url');
   $response = 0;
+  $errors = [
+    -1 => "No Import URL",
+    -2 => "Invalid URL",
+    -3 => "No data found",
+  ];
   if ($import_url == "") {
     $response = -1;
+    drush_print(t('Error:: @response.
+      Check your migration_module config.',
+      ['@response' => $errors[$response]]));
+    return;
   }
   elseif (!UrlHelper::isValid($import_url, TRUE)) {
     $response = -2;
+    drush_print(t('Error:: @response. Unable to import.
+    Please check your JSON feed URL.',
+      ['@response' => $errors[$response]]));
+    return;
   }
   else {
     $data = Json::decode(file_get_contents($import_url));
     if (empty($data)) {
       $response = -3;
+      drush_print(t('Error:: @response. Unable to import.
+      Please check your JSON feed URL.',
+        ['@response' => $errors[$response]]));
+      return;
     }
     $count_user = 0;
     $count_company = 0;
@@ -93,28 +110,20 @@ function drush_migration_module_import_json() {
     }
   }
   if ($count_user == $count_company) {
-    $response = $count_company;
+    drush_print(t('@response nodes has been imported.
+    @user - Users & @company - Company',
+      [
+        '@response' => $count_user + $count_company,
+        '@user' => $count_user,
+        '@company' => $count_company,
+      ]));
+    return;
   }
   else {
-    $response = -99;
-  }
-  $errors = [
-    -1 => "No Import URL",
-    -2 => "Invalid URL",
-    -3 => "No data found",
-  ];
-  if ($response >= 0) {
-    drush_print(t('@response nodes has been imported.',
-       ['@response' => $response]));
-  }
-  elseif ($response == -99) {
     drush_print(t('Warning:: Different Number of
       Company and Users Imported. Please check Drupal and JOSN and make sure
       everything is place.'));
+    return;
   }
-  else {
-    drush_print(t('Error:: @response. Unable to import.
-      Please check format of your JSON file.',
-     ['@response' => $errors[$response]]));
-  }
+
 }
