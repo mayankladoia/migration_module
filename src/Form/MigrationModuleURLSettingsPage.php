@@ -72,7 +72,7 @@ class MigrationModuleURLSettingsPage extends FormBase {
     $form['migration_module_json_url'] = [
       '#type' => 'textfield',
       '#title' => $this->t('Enter JSON URL for import'),
-      // '#required' => TRUE,
+      '#required' => TRUE,
       '#default_value' => $config->get('migration_module_json_url'),
     ];
     $form['submit'] = [
@@ -106,7 +106,8 @@ class MigrationModuleURLSettingsPage extends FormBase {
     if ($response >= 0) {
       $message->addStatus($this->t('@response nodes has been imported.
       @user - Users & @company - Company',
-      ['@response' => $response, '@user' => $response / 2, '@company' => $response / 2]));
+      ['@response' => $response, '@user' => $response / 2,
+      '@company' => $response / 2]));
     }
     elseif ($response == -99) {
       $message->addWarning($this->t('Warning:: Different Number of
