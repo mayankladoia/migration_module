@@ -60,9 +60,11 @@ class MigrationModuleURLSettingsPage extends FormBase {
    * Building form to save JSON URL.
    *
    * @param array $form
+   * Drupal form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
-   *
+   * Drupal FormStateInterface.
    * @return array
+   * Returns the form to be diaplayed.
    */
   public function buildForm(array $form, FormStateInterface $form_state) {
     $config = $this->config('migration_module.settings');
@@ -83,7 +85,9 @@ class MigrationModuleURLSettingsPage extends FormBase {
    * After Import button is clicked.
    *
    * @param array $form
+   * Drupal form.
    * @param \Drupal\Core\Form\FormStateInterface $form_state
+   * Drupal FormStateInterface.
    */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     $config_edit = $this->configFactory()->getEditable('migration_module.settings');
