@@ -9,6 +9,8 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Render\Element;
 use Drupal\node\Entity\Node;
+use GuzzleHttp\ClientInterface;
+use GuzzleHttp\Exception\RequestException;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -24,13 +26,23 @@ class MigrationModuleURLSettingsPage extends FormBase {
   protected $entityTypeManager;
 
   /**
+   * The HTTP client to fetch the feed data with.
+   *
+   * @var \GuzzleHttp\ClientInterface
+   */
+  protected $httpClient;
+
+  /**
    * Constructs a new QueryInterface class.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
    *   The module handler.
+   * @param \GuzzleHttp\ClientInterface $http_client
+   *   A Guzzle client object.
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, ClientInterface $http_client) {
     $this->entityTypeManager = $entity_type_manager;
+    $this->httpClient = $http_client;
   }
 
   /**
@@ -38,7 +50,8 @@ class MigrationModuleURLSettingsPage extends FormBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('entity_type.manager')
+      $container->get('entity_type.manager'),
+      $container->get('http_client')
     );
   }
 
@@ -99,7 +112,8 @@ class MigrationModuleURLSettingsPage extends FormBase {
     $errors = [
       -1 => "No Import URL",
       -2 => "Invalid URL",
-      -3 => "No data found",
+      -3 => "Unable to load URL",
+      -4 => "No data found",
     ];
     $response = $this->importJsonData();
     $message = $this->messenger();
@@ -137,9 +151,20 @@ class MigrationModuleURLSettingsPage extends FormBase {
       return -2;
     }
     else {
-      $data = Json::decode(file_get_contents($import_url));
-      if (empty($data)) {
+      try {
+        $import_response = $this->httpClient->request('GET', $import_url);
+      }
+      catch (RequestException $e) {
+        watchdog_exception('migration_module', $e);
         return -3;
+      }
+      $code = $import_response->getStatusCode();
+      if ($code != 200) {
+        return -3;
+      }
+      $data = Json::decode((string) $import_response->getBody()->getContents());
+      if (empty($data)) {
+        return -4;
       }
       $count_user = 0;
       $count_company = 0;
