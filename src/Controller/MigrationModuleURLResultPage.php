@@ -30,8 +30,9 @@ class MigrationModuleURLResultPage extends ControllerBase {
    * Class constructor.
    *
    * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity
-   * @param \Drupal\Core\Entity\Query\QueryInterface $entityQuery
    *   The Entity type manager service.
+   * @param \Drupal\Core\Entity\Query\QueryInterface $entityQuery
+   *   The EntityQuery type manager service.
    */
   public function __construct(EntityTypeManagerInterface $entity, QueryFactory $entityQuery) {
     $this->nodeStorage = $entity->getStorage('node');
