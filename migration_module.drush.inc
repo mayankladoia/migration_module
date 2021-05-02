@@ -53,7 +53,8 @@ function drush_migration_module_import_json() {
     return;
   }
   else {
-    $data = Json::decode(file_get_contents($import_url));
+    $req = Drupal::httpClient()->get($import_url, array('headers' => array('Accept' => 'text/plain')));
+    $data = Json::decode((string) $req->getBody());
     if (empty($data)) {
       $response = -3;
       drush_print(t('Error:: @response. Unable to import.
