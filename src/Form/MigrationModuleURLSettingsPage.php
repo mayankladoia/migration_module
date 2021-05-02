@@ -106,8 +106,11 @@ class MigrationModuleURLSettingsPage extends FormBase {
     if ($response >= 0) {
       $message->addStatus($this->t('@response nodes has been imported.
       @user - Users & @company - Company',
-      ['@response' => $response, '@user' => $response / 2,
-      '@company' => $response / 2]));
+      [
+        '@response' => $response,
+        '@user' => $response / 2,
+        '@company' => $response / 2,
+      ]));
     }
     elseif ($response == -99) {
       $message->addWarning($this->t('Warning:: Different Number of
