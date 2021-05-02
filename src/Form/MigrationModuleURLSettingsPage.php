@@ -9,7 +9,6 @@ use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Render\Element;
 use Drupal\node\Entity\Node;
-use Drupal\Core\Entity\Query\QueryInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -20,20 +19,20 @@ class MigrationModuleURLSettingsPage extends FormBase {
   /**
    * The module handler.
    *
-   * @var Drupal\Core\Entity\Query\QueryInterface
+   * @var \Drupal\Core\Entity\Query\QueryInterface
    */
   protected $entityQuery;
-  
+
   /**
-    * Constructs a new QueryInterface class.
-    *
-    * @param \Drupal\Core\Entity\Query\QueryInterface $entityQuery
-    *   The module handler.
-    */
+   * Constructs a new QueryInterface class.
+   *
+   * @param \Drupal\Core\Entity\Query\QueryInterface $entityQuery
+   *   The module handler.
+   */
   /*public function __construct(QueryInterface $entityQuery) {
-    $this->entityQuery = $entityQuery;
+  $this->entityQuery = $entityQuery;
   }*/
-  
+
   /**
    * {@inheritdoc}
    */
@@ -42,7 +41,7 @@ class MigrationModuleURLSettingsPage extends FormBase {
       $container->get('entity.query')->get('node')
     );
   }
-  
+
   /**
    * {@inheritdoc}
    */
@@ -135,25 +134,25 @@ class MigrationModuleURLSettingsPage extends FormBase {
           ->condition('type', 'user_import')
           ->condition('field_id', $item['id'], "=")
           ->execute();
-          
-        if(empty($ids)) {
+
+        if (empty($ids)) {
           $node = Node::create([
-          'type'        => 'user_import',
-          'field_id'       => $item['id'],
-          'title'       => $item['name'],
-          'field_username'       => $item['username'],
-          'field_email'       => $item['email'],
-          'field_address_street'       => $item['address']['street'],
-          'field_address_suite'       => $item['address']['suite'],
-          'field_address_city'       => $item['address']['city'],
-          'field_address_zipcode'       => $item['address']['zipcode'],
-          'field_address_geo_lat'       => $item['address']['geo']['lat'],
-          'field_address_geo_lng'       => $item['address']['geo']['lng'],
-          'field_phone'       => $item['phone'],
-          'field_website'       => $item['website'],
+            'type'        => 'user_import',
+            'field_id'       => $item['id'],
+            'title'       => $item['name'],
+            'field_username'       => $item['username'],
+            'field_email'       => $item['email'],
+            'field_address_street'       => $item['address']['street'],
+            'field_address_suite'       => $item['address']['suite'],
+            'field_address_city'       => $item['address']['city'],
+            'field_address_zipcode'       => $item['address']['zipcode'],
+            'field_address_geo_lat'       => $item['address']['geo']['lat'],
+            'field_address_geo_lng'       => $item['address']['geo']['lng'],
+            'field_phone'       => $item['phone'],
+            'field_website'       => $item['website'],
           ]);
           $result1 = $node->save();
-          if($result1 != 0) {
+          if ($result1 != 0) {
             $count_user++;
           }
         }
@@ -161,7 +160,7 @@ class MigrationModuleURLSettingsPage extends FormBase {
           ->condition('type', 'company_import')
           ->condition('field_id_company', $item['id'], "=")
           ->execute();
-        if(empty($ids)) {
+        if (empty($ids)) {
           $node = Node::create([
             'type' => 'company_import',
             'field_id_company' => $item['id'],
@@ -170,15 +169,16 @@ class MigrationModuleURLSettingsPage extends FormBase {
             'field_bs' => $item['company']['bs'],
           ]);
           $result2 = $node->save();
-          if($result2 != 0) {
+          if ($result2 != 0) {
             $count_company++;
           }
         }
       }
     }
-    if($count_user == $count_company) {
+    if ($count_user == $count_company) {
       return $count_company;
-    } else {
+    }
+    else {
       return -99;
     }
   }
