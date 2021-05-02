@@ -14,7 +14,7 @@ class MigrationModuleURLResultPage extends ControllerBase {
   /**
    * The storage handler class for nodes.
    *
-   * @var \Drupal\node\NodeStorage
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
    */
   private $nodeStorage;
 
