@@ -92,6 +92,12 @@ class MigrationModuleURLSettingsPage extends FormBase {
       '#type' => 'submit',
       '#value' => $this->t('Import'),
     ];
+    $form['result_link'] = [
+      '#markup' => '<br /><br /><br /><p style="font-size: large;
+        font-weight: bold;">
+        <a href ="/migration_module_settings/JSON_URL/result"
+        target="_blank">Click Here</a> To see the imported data</p>',
+    ];
     return $form;
   }
 
