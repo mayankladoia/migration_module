@@ -4,13 +4,39 @@ namespace Drupal\migration_module\Controller;
 
 use Drupal;
 use Drupal\Core\Controller\ControllerBase;
-use Drupal\node\Entity\Node;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 
 /**
  * Class to display the imported data.
  */
 class MigrationModuleURLResultPage extends ControllerBase {
 
+  /**
+   * The storage handler class for nodes.
+   *
+   * @var \Drupal\node\NodeStorage
+   */
+  private $nodeStorage;
+
+  /**
+   * Class constructor.
+   *
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity
+   *   The Entity type manager service.
+   */
+  public function __construct(EntityTypeManagerInterface $entity) {
+    $this->nodeStorage = $entity->getStorage('node');
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+    $container->get('entity_type.manager')
+    );
+  }
   /**
    * Format imported data in html table format.
    */
@@ -30,7 +56,7 @@ class MigrationModuleURLResultPage extends ControllerBase {
 <th style="width: 10%">website</th>
 <th class="company" style="width: 25%">company</th>';
     foreach ($result as $nid) {
-      $data = Node::load($nid);
+      $data = $this->nodeStorage->load($nid);
       $html .= "<tr>";
       $html .= '<td>' . $data->get('field_id')->value . "</td>";
       $html .= '<td>' . $data->get('title')->value . "</td>";
@@ -51,7 +77,7 @@ class MigrationModuleURLResultPage extends ControllerBase {
         ->condition('field_id_company', $data->get('field_id')->value, "=")
         ->execute();
       foreach ($company as $nid_company) {
-        $data_company = Node::load($nid_company);
+        $data_company = $this->nodeStorage->load($nid_company);
         $html .= '<td class="company">' . $data_company->get('title')->value
         . "<br />" . $data_company->get('field_catchphrase')->value
         . "<br />" . $data_company->get('field_bs')->value
