@@ -22,9 +22,16 @@ Drupal 8.x
 
 INSTALLATION
 ================================================================================
-Add to you custom module folder
+Steps:
+1. Add migration_module_content_type to you custom module folder
+2. Import content type from migration_module_content_type by installing the module
+3. Add migration_module to you custom module folder
+4. Install migration_module
 
 
 CONFIGURATION
 ================================================================================
-Add JSON endpoint in the config from where you would like to import the data
+1. Enter URL of JSON import in 'Enter JSON URL for import' textfield
+2. Click import to import User and Company as node
+Alternate method to import data using drush command
+drush import-json
