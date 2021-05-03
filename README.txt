@@ -24,7 +24,8 @@ INSTALLATION
 ================================================================================
 Steps:
 1. Add migration_module_content_type to you custom module folder
-2. Import content type from migration_module_content_type by installing the module
+2. Import content type from migration_module_content_type by installing the
+   module
 3. Add migration_module to you custom module folder
 4. Install migration_module
 
